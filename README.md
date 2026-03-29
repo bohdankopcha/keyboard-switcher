@@ -2,7 +2,7 @@
 
 Расширение для [Raycast](https://raycast.com), которое управляет раскладками клавиатуры через CLI-утилиту [keyboardSwitcher](https://github.com/nicklockwood/keyboardSwitcher).
 
-Главная фишка — создание **Quicklink** для любой раскладки и назначение ему хоткея в настройках Raycast. Получается мгновенное переключение раскладки одной клавишей, без открытия какого-либо UI.
+Главная фишка — создание **Quicklink** для любой включённой раскладки и назначение ему хоткея в настройках Raycast. Получается мгновенное переключение раскладки одной клавишей, без открытия какого-либо UI.
 
 ---
 
@@ -33,49 +33,48 @@ Raycast подхватит расширение в режиме разработ
 
 ## Команды
 
-### 1. List Enabled Keyboard Layouts
+### 1. List All Keyboard Layouts
 
-Показывает список **включённых** раскладок (те, что видны в системном меню macOS).
+Основная команда. Показывает все доступные на Mac раскладки. Включённые отмечены зелёным тегом `enabled`.
+
+В правой части поисковой строки — фильтр:
+- **All** — все раскладки
+- **Enabled** — только включённые
+
+**Действия на включённой раскладке:**
 
 | Действие | Горячая клавиша | Описание |
 |---|---|---|
 | Select Layout | `↵ Enter` | Переключиться на эту раскладку |
 | Create Quicklink | `Cmd+Shift+L` | Создать quicklink для привязки к хоткею |
-| Disable Layout | `Ctrl+X` | Убрать раскладку из списка включённых |
-| Refresh | `Cmd+R` | Обновить список |
+| Disable Layout | `Ctrl+X` | Убрать раскладку из системного списка |
 
-> **Как назначить хоткей на раскладку:**
-> 1. Откройте команду, нажмите `Create Quicklink` на нужной раскладке
-> 2. В Raycast Settings → Extensions → Quicklinks найдите созданный quicklink
-> 3. Назначьте ему горячую клавишу
-> 4. Теперь нажатие этой клавиши мгновенно переключает раскладку
-
----
-
-### 2. List All Keyboard Layouts
-
-Показывает **все** доступные на Mac раскладки. Включённые отмечены зелёным тегом `enabled`.
+**Действия на выключенной раскладке:**
 
 | Действие | Горячая клавиша | Описание |
 |---|---|---|
-| Select Layout | `↵ Enter` | Переключиться (включит автоматически, если нужно) |
-| Enable Layout | `Cmd+E` | Добавить раскладку в список включённых |
-| Disable Layout | `Ctrl+X` | Убрать из включённых |
-| Create Quicklink | `Cmd+Shift+L` | Создать quicklink для хоткея |
-| Refresh | `Cmd+R` | Обновить список |
+| Select Layout | `↵ Enter` | Включить и переключиться |
+| Enable Layout | `Cmd+E` | Добавить раскладку в системный список |
 
 ---
 
-### 3. Select Keyboard Layout *(no-view)*
+### 2. Select Keyboard Layout *(no-view)*
 
-Служебная команда, которая **переключает раскладку без открытия UI**. Принимает ID раскладки как аргумент.
+Служебная команда — переключает раскладку по ID **без открытия UI**. Используется как цель для quicklink-ов.
 
-Используется как цель для Quicklink-ов, созданных командами 1 и 2.
+Напрямую вызывать не нужно — она работает в фоне, когда срабатывает quicklink.
 
-**Формат deeplink:**
-```
-raycast://extensions/bogdan/keyboard-switcher/select-layout?arguments={"layout":"com.apple.keylayout.British-PC"}
-```
+---
+
+## Как назначить хоткей на раскладку
+
+1. Откройте **List All Keyboard Layouts**
+2. Найдите нужную включённую раскладку (зелёный тег `enabled`)
+3. Нажмите `Cmd+K` → **Create Quicklink**
+4. В Raycast откроется диалог создания quicklink — подтвердите
+5. Перейдите в **Raycast Settings → Extensions → Quicklinks**
+6. Найдите созданный quicklink и назначьте ему горячую клавишу
+7. Готово — теперь нажатие этой клавиши мгновенно переключает раскладку
 
 ---
 
@@ -94,18 +93,21 @@ raycast://extensions/bogdan/keyboard-switcher/select-layout?arguments={"layout":
 ## Как это работает
 
 ```
-List Enabled (команда 1)
+List All Keyboard Layouts
     │
-    └─ Create Quicklink ──▶ Quicklink в Raycast (можно назначить хоткей)
-                                    │
-                                    ▼ активация хоткея
-                            select-layout (команда 3, no-view)
-                                    │
-                                    ▼
-                            keyboardSwitcher select <id>
+    └─ Create Quicklink (на включённой раскладке)
+            │
+            ▼
+        Quicklink в Raycast → назначить хоткей
+            │
+            ▼ нажатие хоткея
+        select-layout (no-view, без UI)
+            │
+            ▼
+        keyboardSwitcher select <id>
 ```
 
-Расширение вызывает `keyboardSwitcher` через `execSync` — никаких фоновых процессов, никаких демонов. Каждая операция — простой shell-вызов.
+Расширение вызывает `keyboardSwitcher` через `execSync` — никаких фоновых процессов, никаких демонов.
 
 ---
 
@@ -116,9 +118,8 @@ keyboard-switcher-extension/
 ├── package.json          # Raycast манифест + npm
 ├── tsconfig.json
 ├── src/
-│   ├── list-enabled.tsx  # Команда 1 — включённые раскладки
-│   ├── list-all.tsx      # Команда 2 — все раскладки
-│   ├── select-layout.tsx # Команда 3 — переключение по аргументу (no-view)
+│   ├── list-all.tsx      # Основная команда — все раскладки
+│   ├── select-layout.tsx # Служебная команда для quicklink-ов (no-view)
 │   └── utils.ts          # findBinary, runCLI, parseLayouts
 └── assets/
     └── command-icon.png
