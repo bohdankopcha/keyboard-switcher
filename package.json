@@ -1,0 +1,66 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "keyboard-switcher",
+  "title": "Keyboard Switcher",
+  "description": "Manage keyboard layouts via keyboardSwitcher CLI",
+  "icon": "command-icon.png",
+  "author": "bogdan",
+  "categories": [
+    "System"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "list-enabled",
+      "title": "List Enabled Keyboard Layouts",
+      "description": "Show enabled keyboard layouts and switch or create quicklinks",
+      "mode": "view"
+    },
+    {
+      "name": "list-all",
+      "title": "List All Keyboard Layouts",
+      "description": "Show all available keyboard layouts, enable/disable/select them",
+      "mode": "view"
+    },
+    {
+      "name": "select-layout",
+      "title": "Select Keyboard Layout",
+      "description": "Directly select a keyboard layout by ID (suitable for quicklinks/hotkeys)",
+      "mode": "no-view",
+      "arguments": [
+        {
+          "name": "layout",
+          "placeholder": "Layout ID",
+          "type": "text",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "preferences": [
+    {
+      "name": "binaryPath",
+      "title": "keyboardSwitcher Path",
+      "description": "Full path to the keyboardSwitcher binary",
+      "type": "textfield",
+      "default": "/opt/homebrew/bin/keyboardSwitcher",
+      "required": false
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.93.2"
+  },
+  "devDependencies": {
+    "@raycast/utils": "^1.17.0",
+    "@types/node": "^20.8.10",
+    "@types/react": "19.0.10",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
