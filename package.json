@@ -11,12 +11,6 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "list-enabled",
-      "title": "List Enabled Keyboard Layouts",
-      "description": "Show enabled keyboard layouts and switch or create quicklinks",
-      "mode": "view"
-    },
-    {
       "name": "list-all",
       "title": "List All Keyboard Layouts",
       "description": "Show all available keyboard layouts, enable/disable/select them",
@@ -25,7 +19,7 @@
     {
       "name": "select-layout",
       "title": "Select Keyboard Layout",
-      "description": "Directly select a keyboard layout by ID (suitable for quicklinks/hotkeys)",
+      "description": "Switch to a keyboard layout by ID — used as a quicklink target",
       "mode": "no-view",
       "arguments": [
         {

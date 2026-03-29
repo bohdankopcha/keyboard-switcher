@@ -2,11 +2,14 @@ import { ActionPanel, Action, List, showToast, Toast, Icon, Color } from "@rayca
 import { useState, useEffect } from "react";
 import { Layout, getAllLayouts, getEnabledLayouts, runCLI } from "./utils";
 
+type Filter = "all" | "enabled";
+
 export default function ListAll() {
   const [allLayouts, setAllLayouts] = useState<Layout[]>([]);
   const [enabledIds, setEnabledIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<Filter>("all");
 
   function loadLayouts() {
     setIsLoading(true);
@@ -72,9 +75,23 @@ export default function ListAll() {
     }
   }
 
+  const visibleLayouts =
+    filter === "enabled" ? allLayouts.filter((l) => enabledIds.has(l.id)) : allLayouts;
+
+  const searchBarAccessory = (
+    <List.Dropdown
+      tooltip="Show"
+      value={filter}
+      onChange={(value) => setFilter(value as Filter)}
+    >
+      <List.Dropdown.Item title="All" value="all" />
+      <List.Dropdown.Item title="Enabled" value="enabled" />
+    </List.Dropdown>
+  );
+
   if (error) {
     return (
-      <List isLoading={false}>
+      <List isLoading={false} searchBarAccessory={searchBarAccessory}>
         <List.EmptyView
           icon={{ source: Icon.ExclamationMark, tintColor: Color.Red }}
           title="Error"
@@ -85,8 +102,8 @@ export default function ListAll() {
   }
 
   return (
-    <List isLoading={isLoading} searchBarPlaceholder="Filter all layouts…">
-      {allLayouts.map((layout) => {
+    <List isLoading={isLoading} searchBarPlaceholder="Filter layouts…" searchBarAccessory={searchBarAccessory}>
+      {visibleLayouts.map((layout) => {
         const isEnabled = enabledIds.has(layout.id);
         return (
           <List.Item
@@ -106,13 +123,22 @@ export default function ListAll() {
                   onAction={() => selectLayout(layout)}
                 />
                 {isEnabled ? (
-                  <Action
-                    title="Disable Layout"
-                    icon={Icon.Trash}
-                    style={Action.Style.Destructive}
-                    shortcut={{ modifiers: ["ctrl"], key: "x" }}
-                    onAction={() => disableLayout(layout)}
-                  />
+                  <>
+                    <Action.CreateQuicklink
+                      title="Create Quicklink"
+                      quicklink={{
+                        name: `Switch to ${layout.name}`,
+                        link: `raycast://extensions/bogdan/keyboard-switcher/select-layout?arguments=${encodeURIComponent(JSON.stringify({ layout: layout.id }))}`,
+                      }}
+                    />
+                    <Action
+                      title="Disable Layout"
+                      icon={Icon.Trash}
+                      style={Action.Style.Destructive}
+                      shortcut={{ modifiers: ["ctrl"], key: "x" }}
+                      onAction={() => disableLayout(layout)}
+                    />
+                  </>
                 ) : (
                   <Action
                     title="Enable Layout"
@@ -121,19 +147,6 @@ export default function ListAll() {
                     onAction={() => enableLayout(layout)}
                   />
                 )}
-                <Action.CreateQuicklink
-                  title="Create Quicklink"
-                  quicklink={{
-                    name: `Switch to ${layout.name}`,
-                    link: `raycast://extensions/bogdan/keyboard-switcher/select-layout?arguments=${encodeURIComponent(JSON.stringify({ layout: layout.id }))}`,
-                  }}
-                />
-                <Action
-                  title="Refresh"
-                  icon={Icon.ArrowClockwise}
-                  shortcut={{ modifiers: ["cmd"], key: "r" }}
-                  onAction={loadLayouts}
-                />
               </ActionPanel>
             }
           />

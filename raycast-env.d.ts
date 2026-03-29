@@ -16,8 +16,6 @@ type ExtensionPreferences = {
 declare type Preferences = ExtensionPreferences
 
 declare namespace Preferences {
-  /** Preferences accessible in the `list-enabled` command */
-  export type ListEnabled = ExtensionPreferences & {}
   /** Preferences accessible in the `list-all` command */
   export type ListAll = ExtensionPreferences & {}
   /** Preferences accessible in the `select-layout` command */
@@ -25,8 +23,6 @@ declare namespace Preferences {
 }
 
 declare namespace Arguments {
-  /** Arguments passed to the `list-enabled` command */
-  export type ListEnabled = {}
   /** Arguments passed to the `list-all` command */
   export type ListAll = {}
   /** Arguments passed to the `select-layout` command */

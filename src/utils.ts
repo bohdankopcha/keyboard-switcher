@@ -42,6 +42,7 @@ export function findBinary(): string {
 }
 
 export function parseLayouts(output: string): Layout[] {
+  const seen = new Set<string>();
   return output
     .split("\n")
     .map((line) => line.trim())
@@ -52,7 +53,12 @@ export function parseLayouts(output: string): Layout[] {
       if (!match) return null;
       return { name: match[1].trim(), id: match[2].trim() };
     })
-    .filter((l): l is Layout => l !== null);
+    .filter((l): l is Layout => {
+      if (l === null) return false;
+      if (seen.has(l.id)) return false;
+      seen.add(l.id);
+      return true;
+    });
 }
 
 export function runCLI(args: string[]): string {
