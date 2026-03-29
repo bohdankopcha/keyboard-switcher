@@ -1,15 +1,29 @@
-import { ActionPanel, Action, List, showToast, Toast, Icon, Color } from "@raycast/api";
-import { useState, useEffect } from "react";
+import { ActionPanel, Action, List, showToast, Toast, Icon, Color, Keyboard } from "@raycast/api";
+import { useState, useEffect, useCallback } from "react";
 import { Layout, getAllLayouts, getEnabledLayouts, runCLI } from "./utils";
+import { SLOT_KEYS, SlotData, getSlot, setSlot, clearSlot } from "./switch-layout";
 
 type Filter = "all" | "enabled";
+
+const SLOT_LABELS = ["Layout 1", "Layout 2", "Layout 3"];
+const SLOT_SHORTCUTS: Keyboard.Shortcut[] = [
+  { modifiers: ["cmd"], key: "1" },
+  { modifiers: ["cmd"], key: "2" },
+  { modifiers: ["cmd"], key: "3" },
+];
 
 export default function ListAll() {
   const [allLayouts, setAllLayouts] = useState<Layout[]>([]);
   const [enabledIds, setEnabledIds] = useState<Set<string>>(new Set());
+  const [slots, setSlots] = useState<(SlotData | null)[]>([null, null, null]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
+
+  const loadSlots = useCallback(async () => {
+    const loaded = await Promise.all(SLOT_KEYS.map((key) => getSlot(key)));
+    setSlots(loaded);
+  }, []);
 
   function loadLayouts() {
     setIsLoading(true);
@@ -28,6 +42,7 @@ export default function ListAll() {
 
   useEffect(() => {
     loadLayouts();
+    loadSlots();
   }, []);
 
   async function enableLayout(layout: Layout) {
@@ -75,6 +90,32 @@ export default function ListAll() {
     }
   }
 
+  async function assignToSlot(slotIndex: number, layout: Layout) {
+    await setSlot(SLOT_KEYS[slotIndex], { name: layout.name, id: layout.id });
+    await loadSlots();
+    await showToast({
+      style: Toast.Style.Success,
+      title: `${SLOT_LABELS[slotIndex]} → ${layout.name}`,
+      message: "Enable the command in Raycast settings and assign a hotkey",
+    });
+  }
+
+  async function unassignSlot(slotIndex: number) {
+    await clearSlot(SLOT_KEYS[slotIndex]);
+    await loadSlots();
+    await showToast({ style: Toast.Style.Success, title: `${SLOT_LABELS[slotIndex]} cleared` });
+  }
+
+  function getSlotTags(layoutId: string) {
+    const tags: { value: string; color: Color }[] = [];
+    slots.forEach((s, i) => {
+      if (s?.id === layoutId) {
+        tags.push({ value: `Slot ${i + 1}`, color: Color.Blue });
+      }
+    });
+    return tags;
+  }
+
   const visibleLayouts =
     filter === "enabled" ? allLayouts.filter((l) => enabledIds.has(l.id)) : allLayouts;
 
@@ -105,6 +146,12 @@ export default function ListAll() {
     <List isLoading={isLoading} searchBarPlaceholder="Filter layouts…" searchBarAccessory={searchBarAccessory}>
       {visibleLayouts.map((layout) => {
         const isEnabled = enabledIds.has(layout.id);
+        const slotTags = getSlotTags(layout.id);
+        const accessories = [
+          ...slotTags.map((t) => ({ tag: t })),
+          ...(isEnabled ? [{ tag: { value: "enabled", color: Color.Green } }] : []),
+        ];
+
         return (
           <List.Item
             key={layout.id}
@@ -114,23 +161,41 @@ export default function ListAll() {
               source: Icon.Keyboard,
               tintColor: isEnabled ? Color.Green : Color.SecondaryText,
             }}
-            accessories={isEnabled ? [{ tag: { value: "enabled", color: Color.Green } }] : []}
+            accessories={accessories}
             actions={
               <ActionPanel>
-                <Action
-                  title="Select Layout"
-                  icon={Icon.ArrowRight}
-                  onAction={() => selectLayout(layout)}
-                />
-                {isEnabled ? (
-                  <>
-                    <Action.CreateQuicklink
-                      title="Create Quicklink"
-                      quicklink={{
-                        name: `Switch to ${layout.name}`,
-                        link: `raycast://extensions/bogdan/keyboard-switcher/select-layout?arguments=${encodeURIComponent(JSON.stringify({ layout: layout.id }))}`,
-                      }}
-                    />
+                <ActionPanel.Section>
+                  <Action
+                    title="Select Layout"
+                    icon={Icon.ArrowRight}
+                    onAction={() => selectLayout(layout)}
+                  />
+                </ActionPanel.Section>
+                <ActionPanel.Section title="Assign to Slot">
+                  {SLOT_KEYS.map((key, i) => {
+                    const current = slots[i];
+                    const isAssigned = current?.id === layout.id;
+                    return isAssigned ? (
+                      <Action
+                        key={key}
+                        title={`Clear ${SLOT_LABELS[i]} (${current.name})`}
+                        icon={Icon.XMarkCircle}
+                        shortcut={SLOT_SHORTCUTS[i]}
+                        onAction={() => unassignSlot(i)}
+                      />
+                    ) : (
+                      <Action
+                        key={key}
+                        title={current ? `${SLOT_LABELS[i]}: ${current.name} → ${layout.name}` : `Assign to ${SLOT_LABELS[i]}`}
+                        icon={Icon.Pin}
+                        shortcut={SLOT_SHORTCUTS[i]}
+                        onAction={() => assignToSlot(i, layout)}
+                      />
+                    );
+                  })}
+                </ActionPanel.Section>
+                <ActionPanel.Section>
+                  {isEnabled ? (
                     <Action
                       title="Disable Layout"
                       icon={Icon.Trash}
@@ -138,15 +203,15 @@ export default function ListAll() {
                       shortcut={{ modifiers: ["ctrl"], key: "x" }}
                       onAction={() => disableLayout(layout)}
                     />
-                  </>
-                ) : (
-                  <Action
-                    title="Enable Layout"
-                    icon={Icon.Plus}
-                    shortcut={{ modifiers: ["cmd"], key: "e" }}
-                    onAction={() => enableLayout(layout)}
-                  />
-                )}
+                  ) : (
+                    <Action
+                      title="Enable Layout"
+                      icon={Icon.Plus}
+                      shortcut={{ modifiers: ["cmd"], key: "e" }}
+                      onAction={() => enableLayout(layout)}
+                    />
+                  )}
+                </ActionPanel.Section>
               </ActionPanel>
             }
           />

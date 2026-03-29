@@ -17,18 +17,28 @@
       "mode": "view"
     },
     {
-      "name": "select-layout",
-      "title": "Select Keyboard Layout",
-      "description": "Switch to a keyboard layout by ID — used as a quicklink target",
+      "name": "switch-layout-1",
+      "title": "Switch to Layout 1",
+      "subtitle": "Keyboard Switcher",
+      "description": "Instantly switch to a preconfigured keyboard layout. Assign a layout via List All Keyboard Layouts.",
       "mode": "no-view",
-      "arguments": [
-        {
-          "name": "layout",
-          "placeholder": "Layout ID",
-          "type": "text",
-          "required": true
-        }
-      ]
+      "disabledByDefault": true
+    },
+    {
+      "name": "switch-layout-2",
+      "title": "Switch to Layout 2",
+      "subtitle": "Keyboard Switcher",
+      "description": "Instantly switch to a preconfigured keyboard layout. Assign a layout via List All Keyboard Layouts.",
+      "mode": "no-view",
+      "disabledByDefault": true
+    },
+    {
+      "name": "switch-layout-3",
+      "title": "Switch to Layout 3",
+      "subtitle": "Keyboard Switcher",
+      "description": "Instantly switch to a preconfigured keyboard layout. Assign a layout via List All Keyboard Layouts.",
+      "mode": "no-view",
+      "disabledByDefault": true
     }
   ],
   "preferences": [

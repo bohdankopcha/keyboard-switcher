@@ -18,17 +18,22 @@ declare type Preferences = ExtensionPreferences
 declare namespace Preferences {
   /** Preferences accessible in the `list-all` command */
   export type ListAll = ExtensionPreferences & {}
-  /** Preferences accessible in the `select-layout` command */
-  export type SelectLayout = ExtensionPreferences & {}
+  /** Preferences accessible in the `switch-layout-1` command */
+  export type SwitchLayout1 = ExtensionPreferences & {}
+  /** Preferences accessible in the `switch-layout-2` command */
+  export type SwitchLayout2 = ExtensionPreferences & {}
+  /** Preferences accessible in the `switch-layout-3` command */
+  export type SwitchLayout3 = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
   /** Arguments passed to the `list-all` command */
   export type ListAll = {}
-  /** Arguments passed to the `select-layout` command */
-  export type SelectLayout = {
-  /** Layout ID */
-  "layout": string
-}
+  /** Arguments passed to the `switch-layout-1` command */
+  export type SwitchLayout1 = {}
+  /** Arguments passed to the `switch-layout-2` command */
+  export type SwitchLayout2 = {}
+  /** Arguments passed to the `switch-layout-3` command */
+  export type SwitchLayout3 = {}
 }
 
