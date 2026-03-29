@@ -1,21 +1,24 @@
 import { ActionPanel, Action, List, showToast, Toast, Icon, Color, Keyboard } from "@raycast/api";
 import { useState, useEffect, useCallback } from "react";
-import { Layout, getAllLayouts, getEnabledLayouts, runCLI } from "./utils";
+import { Layout, getAllLayouts, getEnabledLayouts, runCLI, createDeepLink } from "./utils";
 import { SLOT_KEYS, SlotData, getSlot, setSlot, clearSlot } from "./switch-layout";
 
 type Filter = "all" | "enabled";
 
-const SLOT_LABELS = ["Layout 1", "Layout 2", "Layout 3"];
+const SLOT_LABELS = ["Layout 1", "Layout 2", "Layout 3", "Layout 4", "Layout 5", "Layout 6"];
 const SLOT_SHORTCUTS: Keyboard.Shortcut[] = [
   { modifiers: ["cmd"], key: "1" },
   { modifiers: ["cmd"], key: "2" },
   { modifiers: ["cmd"], key: "3" },
+  { modifiers: ["cmd"], key: "4" },
+  { modifiers: ["cmd"], key: "5" },
+  { modifiers: ["cmd"], key: "6" },
 ];
 
 export default function ListAll() {
   const [allLayouts, setAllLayouts] = useState<Layout[]>([]);
   const [enabledIds, setEnabledIds] = useState<Set<string>>(new Set());
-  const [slots, setSlots] = useState<(SlotData | null)[]>([null, null, null]);
+  const [slots, setSlots] = useState<(SlotData | null)[]>([null, null, null, null, null, null]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
@@ -169,6 +172,15 @@ export default function ListAll() {
                     title="Select Layout"
                     icon={Icon.ArrowRight}
                     onAction={() => selectLayout(layout)}
+                  />
+                </ActionPanel.Section>
+                <ActionPanel.Section>
+                  <Action.CreateQuicklink
+                    title="Save as Quicklink"
+                    quicklink={{
+                      name: `Switch to ${layout.name}`,
+                      link: createDeepLink("quick-switch", { name: layout.name, id: layout.id }),
+                    }}
                   />
                 </ActionPanel.Section>
                 <ActionPanel.Section title="Assign to Slot">

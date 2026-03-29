@@ -1,7 +1,14 @@
 import { closeMainWindow, environment, LocalStorage, popToRoot, showHUD } from "@raycast/api";
 import { runCLI } from "./utils";
 
-export const SLOT_KEYS = ["switch-layout-1", "switch-layout-2", "switch-layout-3"] as const;
+export const SLOT_KEYS = [
+  "switch-layout-1",
+  "switch-layout-2",
+  "switch-layout-3",
+  "switch-layout-4",
+  "switch-layout-5",
+  "switch-layout-6",
+] as const;
 
 export interface SlotData {
   name: string;

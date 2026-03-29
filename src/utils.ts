@@ -1,5 +1,5 @@
 import { execSync } from "child_process";
-import { getPreferenceValues } from "@raycast/api";
+import { environment, getPreferenceValues } from "@raycast/api";
 
 interface Preferences {
   binaryPath: string;
@@ -75,4 +75,13 @@ export function getEnabledLayouts(): Layout[] {
 export function getAllLayouts(): Layout[] {
   const output = runCLI(["list"]);
   return parseLayouts(output);
+}
+
+export function createDeepLink<T>(command: string, context?: T): string {
+  const protocol = environment.raycastVersion.includes("alpha") ? "raycastinternal://" : "raycast://";
+  const base = `${protocol}extensions/bogdan/keyboard-switcher/${command}`;
+  if (context) {
+    return `${base}?context=${encodeURIComponent(JSON.stringify(context))}`;
+  }
+  return base;
 }

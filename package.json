@@ -17,6 +17,13 @@
       "mode": "view"
     },
     {
+      "name": "quick-switch",
+      "title": "Quick Switch Layout",
+      "subtitle": "Keyboard Switcher",
+      "description": "Switch to a keyboard layout via Quicklink. Create quicklinks from List All Keyboard Layouts.",
+      "mode": "no-view"
+    },
+    {
       "name": "switch-layout-1",
       "title": "Switch to Layout 1",
       "subtitle": "Keyboard Switcher",
@@ -35,6 +42,30 @@
     {
       "name": "switch-layout-3",
       "title": "Switch to Layout 3",
+      "subtitle": "Keyboard Switcher",
+      "description": "Instantly switch to a preconfigured keyboard layout. Assign a layout via List All Keyboard Layouts.",
+      "mode": "no-view",
+      "disabledByDefault": true
+    },
+    {
+      "name": "switch-layout-4",
+      "title": "Switch to Layout 4",
+      "subtitle": "Keyboard Switcher",
+      "description": "Instantly switch to a preconfigured keyboard layout. Assign a layout via List All Keyboard Layouts.",
+      "mode": "no-view",
+      "disabledByDefault": true
+    },
+    {
+      "name": "switch-layout-5",
+      "title": "Switch to Layout 5",
+      "subtitle": "Keyboard Switcher",
+      "description": "Instantly switch to a preconfigured keyboard layout. Assign a layout via List All Keyboard Layouts.",
+      "mode": "no-view",
+      "disabledByDefault": true
+    },
+    {
+      "name": "switch-layout-6",
+      "title": "Switch to Layout 6",
       "subtitle": "Keyboard Switcher",
       "description": "Instantly switch to a preconfigured keyboard layout. Assign a layout via List All Keyboard Layouts.",
       "mode": "no-view",

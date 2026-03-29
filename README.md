@@ -1,8 +1,24 @@
 # Keyboard Switcher — Raycast Extension
 
-Расширение для [Raycast](https://raycast.com), которое управляет раскладками клавиатуры через CLI-утилиту [keyboardSwitcher](https://github.com/nicklockwood/keyboardSwitcher).
+Расширение для [Raycast](https://raycast.com) для мгновенного переключения раскладок клавиатуры по хоткею — без открытия окна Raycast. Работает через CLI-утилиту [keyboardSwitcher](https://github.com/nicklockwood/keyboardSwitcher).
 
-Главная фишка — **мгновенное переключение раскладки по хоткею** без открытия окна Raycast. Назначьте раскладки на слоты прямо из списка (Cmd+1/2/3), включите нужные команды в Raycast и повесьте хоткеи.
+---
+
+## Как это работает
+
+Расширение предоставляет два способа быстрого переключения раскладки:
+
+### Способ 1: Quicklinks (рекомендуется)
+
+Вы создаёте **quicklink** на нужную раскладку прямо из списка. Quicklink — это закладка в Raycast, на которую можно повесить хоткей. При нажатии хоткея раскладка переключается мгновенно, без открытия какого-либо UI.
+
+**Плюсы:** без ограничений на количество, настройка за 30 секунд.
+
+### Способ 2: Слоты (Switch to Layout 1-6)
+
+Вы назначаете раскладки на пронумерованные слоты (до 6 штук). Каждый слот — это отдельная команда Raycast, на которую можно повесить хоткей. При нажатии раскладка переключается мгновенно.
+
+**Плюсы:** не зависит от deeplink-ов, всё хранится в LocalStorage расширения.
 
 ---
 
@@ -10,7 +26,7 @@
 
 - macOS
 - [Raycast](https://raycast.com) (бесплатная версия подходит)
-- [`keyboardSwitcher`](https://github.com/nicklockwood/keyboardSwitcher) — установить через Homebrew:
+- [`keyboardSwitcher`](https://github.com/nicklockwood/keyboardSwitcher):
 
 ```bash
 brew install nicklockwood/utils/keyboardswitcher
@@ -18,35 +34,65 @@ brew install nicklockwood/utils/keyboardswitcher
 
 ---
 
-## Установка расширения
+## Установка и сборка
+
+Расширение не опубликовано в Raycast Store, поэтому устанавливается локально:
 
 ```bash
-git clone <repo-url> keyboard-switcher-extension
+# 1. Клонировать репозиторий
+git clone https://github.com/bogdan/keyboard-switcher-extension.git
 cd keyboard-switcher-extension
+
+# 2. Установить зависимости
 npm install
+
+# 3. Запустить в dev-режиме (расширение появится в Raycast)
 npm run dev
 ```
 
-Raycast подхватит расширение в режиме разработки. Для постоянной установки используйте `npm run build`.
+После `npm run dev` расширение сразу доступно в Raycast. Команда работает в фоне — пока терминал открыт, расширение активно и автоматически пересобирается при изменениях.
+
+Для постоянной установки (без запущенного терминала):
+
+```bash
+npm run build
+```
+
+После `build` расширение остаётся установленным в Raycast навсегда, пока вы его не удалите через Raycast Settings → Extensions.
+
+---
+
+## Быстрый старт
+
+### Через Quicklinks
+
+1. Откройте Raycast и найдите **List All Keyboard Layouts**
+2. Выберите нужную раскладку (например, Russian)
+3. Нажмите **Cmd+K** → **Save as Quicklink** → **Save Quicklink** (Cmd+Enter)
+4. Откройте **Raycast Settings** (Cmd+,) → **Extensions** → **Quicklinks**
+5. Найдите quicklink «Switch to Russian» и назначьте ему хоткей
+6. Готово — нажмите хоткей, раскладка переключится мгновенно
+
+Повторите для каждой раскладки, на которую хотите повесить хоткей.
+
+### Через слоты
+
+1. Откройте **List All Keyboard Layouts**
+2. Выберите раскладку и нажмите **Cmd+1** — она назначится на Slot 1
+3. Для второй раскладки нажмите **Cmd+2** и т.д. (до 6)
+4. Откройте **Raycast Settings** → **Extensions** → **Keyboard Switcher**
+5. Включите нужные команды (Switch to Layout 1, 2...) и назначьте хоткеи
+6. Нажмите хоткей — раскладка переключится
 
 ---
 
 ## Команды
 
-| Команда | Режим | Описание |
-|---|---|---|
-| List All Keyboard Layouts | view | Все раскладки: включить/выключить/выбрать/назначить на слот |
-| Switch to Layout 1 / 2 / 3 | no-view | Мгновенное переключение. Выключены по умолчанию. |
-
----
-
-## Как назначить хоткей на раскладку
-
-1. Откройте **List All Keyboard Layouts**
-2. Найдите нужную раскладку и нажмите **Cmd+1** (или Cmd+2, Cmd+3) — раскладка назначится на слот
-3. В **Raycast Settings → Extensions → Keyboard Switcher** включите соответствующую команду (Switch to Layout 1)
-4. Назначьте ей хоткей
-5. Готово — нажатие хоткея мгновенно переключает раскладку
+| Команда | Описание |
+|---|---|
+| **List All Keyboard Layouts** | Список всех раскладок: переключение, создание quicklinks, назначение слотов, включение/отключение |
+| **Quick Switch Layout** | Служебная команда для quicklink-ов. Вызывается автоматически при нажатии хоткея на quicklink. |
+| **Switch to Layout 1-6** | Команды-слоты. Выключены по умолчанию — включите нужные в настройках Raycast. |
 
 ---
 
@@ -55,19 +101,18 @@ Raycast подхватит расширение в режиме разработ
 | Клавиша | Действие |
 |---|---|
 | `↵ Enter` | Переключиться на раскладку |
-| `Cmd+1` | Назначить на Slot 1 (или убрать, если уже назначена) |
-| `Cmd+2` | Назначить на Slot 2 |
-| `Cmd+3` | Назначить на Slot 3 |
-| `Cmd+E` | Включить раскладку |
+| `Cmd+K` → Save as Quicklink | Создать quicklink |
+| `Cmd+1` ... `Cmd+6` | Назначить на слот (или снять) |
+| `Cmd+E` | Включить раскладку в системе |
 | `Ctrl+X` | Отключить раскладку |
 
 ---
 
-## Настройки
+## Настройки расширения
 
 | Параметр | По умолчанию | Описание |
 |---|---|---|
-| keyboardSwitcher Path | `/opt/homebrew/bin/keyboardSwitcher` | Путь до бинарника |
+| keyboardSwitcher Path | `/opt/homebrew/bin/keyboardSwitcher` | Путь до бинарника. Менять нужно только если keyboardSwitcher установлен не через Homebrew. |
 
 ---
 
@@ -75,15 +120,14 @@ Raycast подхватит расширение в режиме разработ
 
 ```
 keyboard-switcher-extension/
-├── package.json
+├── package.json              # Raycast манифест + npm
 ├── tsconfig.json
 ├── src/
-│   ├── list-all.tsx          # Список раскладок + назначение слотов
-│   ├── switch-layout.ts      # Общая логика переключения (LocalStorage)
-│   ├── switch-layout-1.ts    # Слот 1
-│   ├── switch-layout-2.ts    # Слот 2
-│   ├── switch-layout-3.ts    # Слот 3
-│   └── utils.ts              # findBinary, runCLI, parseLayouts
+│   ├── list-all.tsx          # Список раскладок + quicklinks + слоты
+│   ├── quick-switch.ts       # Переключение через quicklink (launchContext, no-view)
+│   ├── switch-layout.ts      # Общая логика слотов (LocalStorage)
+│   ├── switch-layout-1..6.ts # Слоты 1-6 (реэкспорт switch-layout.ts)
+│   └── utils.ts              # findBinary, runCLI, parseLayouts, createDeepLink
 └── assets/
     └── command-icon.png
 ```
