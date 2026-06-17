@@ -1,6 +1,6 @@
 # Keyboard Switcher — Raycast Extension
 
-Расширение для [Raycast](https://raycast.com) для мгновенного переключения раскладок клавиатуры по хоткею — без открытия окна Raycast. Работает через CLI-утилиту [keyboardSwitcher](https://github.com/nicklockwood/keyboardSwitcher).
+Расширение для [Raycast](https://raycast.com) для мгновенного переключения раскладок клавиатуры по хоткею — без открытия окна Raycast. Работает через CLI-утилиту [keyboardSwitcher](https://github.com/Lutzifer/keyboardSwitcher).
 
 ---
 
@@ -26,7 +26,7 @@
 
 - macOS
 - [Raycast](https://raycast.com) (бесплатная версия подходит)
-- [`keyboardSwitcher`](https://github.com/nicklockwood/keyboardSwitcher):
+- [`keyboardSwitcher`](https://github.com/Lutzifer/keyboardSwitcher):
 
 ```bash
 brew install nicklockwood/utils/keyboardswitcher
